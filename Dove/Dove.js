@@ -1,24 +1,14 @@
 /* eslint-disable require-yield, eqeqeq */
 
-import {
-  Sprite,
-  Trigger,
-  Watcher,
-  Costume,
-  Color,
-  Sound,
-} from "https://unpkg.com/leopard@^1/dist/index.esm.js";
+import { Sprite, Trigger, Watcher, Costume, Color, Sound } from "https://unpkg.com/leopard@^1/dist/index.esm.js";
 
 export default class Dove extends Sprite {
   constructor(...args) {
     super(...args);
 
     this.costumes = [
-      new Costume("dove-a", "./Dove/costumes/dove-a.svg", {
-        x: 59.555845000000005,
-        y: 52.34710172799984,
-      }),
-      new Costume("dove-b", "./Dove/costumes/dove-b.svg", { x: 88, y: 57 }),
+      new Costume("dove-a", "./Dove/costumes/dove-a.svg", { x: 59.555845000000005, y: 52.34710172799984 }),
+      new Costume("dove-b", "./Dove/costumes/dove-b.svg", { x: 88, y: 57 })
     ];
 
     this.sounds = [new Sound("bird", "./Dove/sounds/bird.wav")];
@@ -26,6 +16,7 @@ export default class Dove extends Sprite {
     this.triggers = [
       new Trigger(Trigger.GREEN_FLAG, this.whenGreenFlagClicked),
       new Trigger(Trigger.GREEN_FLAG, this.whenGreenFlagClicked2),
+      new Trigger(Trigger.GREEN_FLAG, this.followMouse) // New trigger to enable mouse‑controlled movement
     ];
   }
 
@@ -56,6 +47,14 @@ export default class Dove extends Sprite {
         this.stage.vars.points++;
       }
       yield;
+    }
+  }
+
+  // New coroutine: keep the dove glued to the mouse position every tick
+  *followMouse() {
+    while (true) {
+      this.goto(this.mouse.x, this.mouse.y);
+      yield; // Let the engine breathe before the next frame
     }
   }
 }
